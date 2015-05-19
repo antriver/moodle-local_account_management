@@ -15,17 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO
- *
- * @package   DragonNet Password Reset
- * @copyright Adam Morris
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    local_account_management
+ * @copyright  Adam Morris <www.mistermorris.com> and Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-$plugin->pluginname = "DragonNet Password Reset";
-$plugin->version = 2014022305;
+$plugin->pluginname = "Account Management";
+$plugin->version = 2015051900;
 $plugin->release = '.8 (Build: 2014022305)';
 $plugin->requires = 2013051404;   // Moodle 2.5 January
-$plugin->cron = 0;
-$plugin->component = 'local_dnet_account_management';
+$plugin->component = 'local_account_management';
 $plugin->maturity = 'MATURITY_BETA';  // _STABLE?

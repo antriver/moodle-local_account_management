@@ -1,50 +1,54 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once '../../../config.php';
-require_once '../output.php';
-require_once '../../../local/dnet_common/sharedlib.php';
+/**
+ * @package    local_account_management
+ * @copyright  Adam Morris <www.mistermorris.com> and Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once('../../../config.php');
+require_once('../lib/output.php');
+require_once('../lib/sharedlib.php');
 
 setup_page();
-
-$powerschoolID = optional_param('powerschool', '', PARAM_RAW);
-if (!empty($powerschoolID)) {
-    $user = $DB->get_record('user', array('idnumber'=>$powerschoolID));
-    $family_id = substr($powerschoolID, 0, 4);
-}
-$reset_password = optional_param('reset_password', '', PARAM_RAW);
-$email = optional_param('email', '', PARAM_RAW);
-
 output_tabs('For: New Students');
-
-if (isloggedin()) {
-    death('This section is intended for parents or new students who want to know their DragonNet username. You have to be logged out to access.');
-} else {
 
 ?>
 
-<div class="local-alert"><i class="icon-info-sign icon-4x pull-left"></i>
-<p style="font-size:18px;font-weight:bold;">How and when can I get my DragonNet account?</p>
-They are created automatically the first day that you attend SSIS. Your teachers are emailed your details.
+<div class="alert alert-block alert-info">
+    <h4><i class="fa fa-clock-o"></i> How and when can I get my DragonNet account?</h4>
+    <p>They are created automatically the first day that you attend SSIS. Your teachers are emailed your details.</p>
 </div>
 
-<div class="local-alert"><i class="icon-info-sign icon-4x pull-left"></i>
-<p style="font-size:18px;font-weight:bold;">How and when can I get my DragonNet Parent account?</p>
-They are created automatically, along with new student accounts, on the first day that your child attend SSIS. Parents should receive an email with the subject "Your SSIS DragonNet Parent Account"
+<div class="alert alert-block alert-info">
+    <h4><i class="fa fa-female"></i> How and when can I get my DragonNet Parent account?</h4>
+    <p>They are created automatically, along with new student accounts, on the first day that your child attend SSIS. Parents should receive an email with the subject "Your SSIS DragonNet Parent Account".</p>
 </div>
 
-<div class="local-alert"><i class="icon-info-sign icon-4x pull-left"></i>
-<p style="font-size:18px;font-weight:bold;">What is my username?</p>
-Your username is created according to your passport name and the year you graduate.
-For example, if your family name is "Student" and your given name is "Happy", and you will graduate from high school in the year 2020, your username is happystudent20.
+<div class="alert alert-block alert-info">
+    <h4><i class="fa fa-user"></i> What is my username?</h4>
+    <p>Your username is created according to your passport name and the year you graduate. For example, if your family name is "Student" and your given name is "Happy", and you will graduate from high school in the year 2020, your username is happystudent20.</p>
 </div>
 
-<div class="local-alert"><i class="icon-info-sign icon-4x pull-left"></i>
-<p style="font-size:18px;font-weight:bold;">What is my email address?</p>
-Your username + @student.ssis-suzhou.net.
+<div class="alert alert-block alert-info">
+    <h4><i class="fa fa-envelope-o"></i> What is my email address?</h4>
+    <p>Your username@student.ssis-suzhou.net</p>
 </div>
-
 
 <?php
 
-}
 echo $OUTPUT->footer();

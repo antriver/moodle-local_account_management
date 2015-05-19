@@ -1,9 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once '../../../config.php';
-require_once '../../../local/dnet_common/sharedlib.php';
-require_once '../portables.php';
-require_once '../output.php';
+/**
+ * @package    local_account_management
+ * @copyright  Adam Morris <www.mistermorris.com> and Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once('../../../config.php');
+require_once('../lib/sharedlib.php');
+require_once('../lib/locallib.php');
+require_once('../lib/output.php');
 
 // setup_page();
 global $PAGE;
@@ -11,48 +31,52 @@ global $OUTPUT;
 
 setup_page();
 
-require_login();
+//require_login();
 
 output_tabs('For: Secretaries');
 
 if (!is_secretary()) {
-    death('Only designated Administrators can access this section.');
+    death('Only designated administrators can access this section.');
 }
 
-$powerschoolID = optional_param('powerschool', '', PARAM_RAW);
-if (!empty($powerschoolID)) {
-    $user = $DB->get_record('user', array('idnumber'=>$powerschoolID));
+$powerschoolid = optional_param('powerschool', '', PARAM_RAW);
+if (!empty($powerschoolid)) {
+    $user = $DB->get_record('user', array('idnumber' => $powerschoolid));
     if (!$user) {
-        death('Something is wrong with the accounts associated with powerschool ID '.$powerschoolID.' you need to contact the DragonNet administrator.');
+        death('Something is wrong with the accounts associated with powerschool ID '.$powerschoolid.' you need to contact the DragonNet administrator.');
     }
-    $family_id = substr($powerschoolID, 0, 4);
+    $familyid = substr($powerschoolid, 0, 4);
 }
-$reset_password = optional_param('reset_password', '', PARAM_RAW);
+$resetpassword = optional_param('reset_password', '', PARAM_RAW);
 
-if ( empty($powerschoolID) )  {
+if (empty($powerschoolid)) {
     ?>
 
-    <div class="local-alert"><i class="icon-info-sign icon-4x pull-left"></i> <p style="font-weight:bold;font-size:18px;">About Resetting DragonNet accounts</p> You can reset anyone's DragonNet account. You can reset parent accounts by looking up their children first. After resetting, they will need to login to DragonNet with their login and the password "changeme".</div>
+    <div class="alert alert-success">
+        <h4><i class="fa fa-info-circle"></i> About Resetting DragonNet accounts</h4>
+        <p>You can reset anyone's DragonNet account. You can reset parent accounts by looking up their children first. After resetting, they will need to login to DragonNet with their login and the password <strong>changeme</strong>.</p>
+    </div>
 
     <?php
 
     output_forms(null, 'Start typing anyone\'s name', 'all');
+
 } else {
 
-    if ($reset_password == "YES") {
-        $newPassword = 'changeme';
+    if ($resetpassword == "YES") {
+        $newpassword = 'changeme';
         $authplugin = get_auth_plugin($user->auth);
 
-        if ( $result = $authplugin->user_update_password($user, $newPassword) ) {
+        if ( $result = $authplugin->user_update_password($user, $newpassword) ) {
             echo $OUTPUT->heading('Password for '.$user->firstname. ' '.$user->lastname.' Changed Successfully to "changeme"');
         } else {
             echo $user->firstname. ' '. $user->lastname. ' could not be changed, probably because they do not have an activated account. Contact the DragonNet administrator.';
         }
         echo '<ul class="buttons"><li><a class="btn" href="'.derive_plugin_path_from('').'"><i class="icon-backward"></i> Return</a></li></ul>';
-        echo '<ul class="buttons"><li><a id="email_user" class="btn" href="'.derive_plugin_path_from('roles/secretaries.php').'?powerschoolid='.$powerschoolID.'&email=YES"><i class="icon-envelope"></i> Email</a></li></ul>';
+        echo '<ul class="buttons"><li><a id="email_user" class="btn" href="'.derive_plugin_path_from('roles/secretaries.php').'?powerschoolid='.$powerschoolid.'&email=YES"><i class="icon-envelope"></i> Email</a></li></ul>';
 
-        //dialogs and scripts used in the box output
-        $default_body = "Dear ".$user->firstname.' '. $user->lastname.",\n\nAs requested, your DragonNet account has been reset.\n\nYour username is:\n".$user->username."\n\nYour password is:\nchangeme\n\nThank you.\n\nRegards,\nSSIS DragonNet";
+        // Dialogs and scripts used in the box output
+        $defaultbody = "Dear ".$user->firstname.' '. $user->lastname.",\n\nAs requested, your DragonNet account has been reset.\n\nYour username is:\n".$user->username."\n\nYour password is:\nchangeme\n\nThank you.\n\nRegards,\nSSIS DragonNet";
 
         $dialog = '<div id="dialog_email_user" title="Edit and click OK to submit email" style="display:none;"><b>To:</b>
         <form id="email_to_user" action="'.derive_plugin_path_from('profile_mods.php').'">
@@ -61,7 +85,7 @@ if ( empty($powerschoolID) )  {
         <p>&nbsp;</p><b>Subject:</b>
         <input name="subject" type="text" id="subject" style="width:100%;margin-top:5px;padding:5px;" value="Your DragonNet account has been reset"/>
         <p>&nbsp;</p><b>Body:</b>
-        <textarea id="text" name="text" style="width:100%;margin-top:5px;padding:5px;" rows="14"/>'.$default_body.'</textarea>
+        <textarea id="text" name="text" style="width:100%;margin-top:5px;padding:5px;" rows="14"/>'.$defaultbody.'</textarea>
         <input type="submit" style="display:none;" />
         </form>
         </div>';
@@ -133,7 +157,7 @@ if ( empty($powerschoolID) )  {
 
         $row->cells[0] = new html_table_cell();
         $row->cells[0]->attributes['class'] = 'left side';
-        $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid'=>1));
+        $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid' => 1));
 
         // print the username area, and then the table that allows the user to click
         $row->cells[1] = new html_table_cell();
@@ -148,7 +172,7 @@ if ( empty($powerschoolID) )  {
         }
 
         // if this is a parent account, secretaries need to be able to edit certain things
-        if (strpos($user->idnumber, 'P')==4) {
+        if (strpos($user->idnumber, 'P') == 4) {
             $row->cells[1]->text .= '<tr>
                 <td>Edit:</td>
                 <td><a id="edit_username" href="#">'.'Username & Email'.'</a></td>
@@ -164,14 +188,16 @@ if ( empty($powerschoolID) )  {
 
         $table->data = array($row);
         echo html_writer::table($table);
-        echo '<ul class="buttons">';
-        echo '<form id="reset_password" action="" method="get">';
+
+        echo '<br/>';
+
+        echo '<form id="reset_password" action="" method="get" class="text-center">';
         echo '<input name="powerschool" type="hidden" value="'.$user->idnumber.'"/>';
         echo '<input name="reset_password" type="hidden" id="reset_password" value="YES"/>';
         if (strpos($user->email, '@student.ssis-suzhou.net') !== false) {
-            echo '<a href="'.derive_plugin_path_from('roles/secretaries.php?powerschool=').$family_id.'P'.'" class="btn" id="parent_instead"><i class="icon-male"></i> Get Parent Account Instead</a>';
+            echo '<a href="'.derive_plugin_path_from('roles/secretaries.php?powerschool=').$familyid.'P'.'" class="btn" id="parent_instead"><i class="icon-male"></i> Get Parent Account Instead</a>';
         }
-        echo '<a id="reset_button" href="#" class="btn"><i class="icon-key"></i> Reset '.$user->firstname.' '.$user->lastname.'\'s password</a>';
+        echo '<a id="reset_button" href="#" class="btn btn-success"><i class="fa fa-key"></i> Reset '.$user->firstname.' '.$user->lastname.'\'s password</a>';
         echo '</form>';
         echo '</ul>';
 

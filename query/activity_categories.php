@@ -20,14 +20,43 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once('../../../config.php');
+header('Content-type: application/json');
 
-require_login();
+$term = optional_param('term', false, PARAM_RAW);
 
-$userid = required_param('userid', PARAM_RAW);
-$text = required_param('text', PARAM_RAW);
-$subject = required_param('subject', PARAM_RAW);
+$results = array();
 
-$from = $DB->get_record('user', array('username' => 'lcssisadmin'));
-$to = $DB->get_record('user', array('id' => $userid));
-email_to_user($to, $from, $subject, $text);
+if ($term) {
+    // Query is being performed
+    $term = str_replace(' ', '', strtolower($term));
+    $params = array();
+
+    $sql = "
+SELECT
+    cat.name, cat.id
+FROM
+    {course_categories} cat
+WHERE
+    REPLACE(LOWER(cat.name), ' ', '') LIKE ?
+";
+
+    // query that gets any match of an activity by its fullname
+    $params[] = '%'.$term.'%';
+
+    $sort = 'name';
+    $fields = 'name, id';
+
+    // execute the query, and step through them
+    $activities = $DB->get_records_sql($sql, $params);
+    foreach ($activities as $row) {
+        $results[] = array(
+            "label" => $row->name,
+            "value" => $row->id
+            );
+
+    }
+
+}
+
+echo json_encode($results);

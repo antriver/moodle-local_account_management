@@ -21,28 +21,47 @@
  */
 
 require_once('../../../config.php');
-require_once('../lib/output.php');
+header('Content-type: application/json');
 
-setup_page();
-output_tabs('For: Students');
+$term = optional_param('term', false, PARAM_RAW);
 
-?>
+if ($term) {
 
-<div class="alert alert-block alert-info">
-    <h4><i class="fa fa-lock"></i> Can't login to DragonNet?</h4>
-    <p>Please ask a teacher to reset your password for you.</p>
-</div>
+    // Query is being performed
+    $term = str_replace(' ', '', strtolower($term));
+    $results = array();
+    $params = array();
 
-<div class="alert alert-block alert-info">
-    <h4><i class="fa fa-video-camera"></i> Can't login to DragonTV?</h4>
-    <p>You must ask a teacher to reset your DragonNet password. You will then need to change your password on DragonNet, and that will be your password for DragonTV and student email as well.</p>
-</div>
+    $sql = "
+SELECT
+    crs.fullname, crs.id
+FROM
+    {course} crs
+JOIN
+    {course_categories} cat
+    ON
+        cat.id = crs.category
+WHERE
+    cat.path like ? AND
+    REPLACE(LOWER(fullname), ' ', '') LIKE ?
+";
 
-<div class="alert alert-block alert-info">
-    <h4><i class="fa fa-envelope-o"></i> Can't login to student email?</h4>
-    <p>You must ask a teacher to reset your DragonNet password. You will then need to change your password on DragonNet, and that will be your password for DragonTV and student email as well.</p>
-</div>
+    // query that gets any match of an activity by its fullname
+    $params[] = "/1/%";
+    $params[] = '%'.$term.'%';
 
-<?php
+    $sort = 'fullname';
+    $fields = 'fullname, id';
 
-echo $OUTPUT->footer();
+    // execute the query, and step through them
+    $activities = $DB->get_records_sql($sql, $params);
+    foreach ($activities as $row) {
+        $results[] = array(
+            "label" => $row->fullname,
+            "value" => $row->id
+            );
+
+    }
+
+    echo json_encode($results);
+}

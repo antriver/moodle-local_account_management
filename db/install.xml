@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/dnet_reset_passwords/db" VERSION="20140311" COMMENT="XMLDB file for Moodle local/dnet_reset_passwords"
+<XMLDB PATH="local/account_management/db" VERSION="20140311" COMMENT="XMLDB file for Moodle local/account_management"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="dnet_pwreset_keys" COMMENT="Stores the keys local_dnet_reset_passwords">
+    <TABLE NAME="acct_mgmt_pw_reset_keys" COMMENT="Stores the keys local_account_management">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>

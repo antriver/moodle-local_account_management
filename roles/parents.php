@@ -1,32 +1,54 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once '../../../config.php';
-require_once '../../../local/dnet_common/sharedlib.php';
-require_once '../portables.php';
-require_once '../output.php';
-require_once '../locallib.php';
+/**
+ * @package    local_account_management
+ * @copyright  Adam Morris <www.mistermorris.com> and Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once('../../../config.php');
+require_once('../lib/sharedlib.php');
+require_once('../lib/locallib.php');
+require_once('../lib/output.php');
 
 setup_page();
 
-$powerschoolID = optional_param('powerschool', '', PARAM_RAW);
-if (!empty($powerschoolID)) {
-    $user = $DB->get_record('user', array('idnumber'=>$powerschoolID));
+$powerschoolid = optional_param('powerschool', '', PARAM_RAW);
+if (!empty($powerschoolid)) {
+    $user = $DB->get_record('user', array('idnumber' => $powerschoolid));
     if (!$user) {
         death("Sorry, it seems like there is a problem with your account. Please contact help@ssis-suzhou.net with the name of your child(ren).");
     }
-    $family_id = substr($powerschoolID, 0, 4);
+    $familyid = substr($powerschoolid, 0, 4);
 }
-$reset_password = optional_param('reset_password', '', PARAM_RAW);
+$resetpassword = optional_param('reset_password', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);
 
 output_tabs('For: Parents');
 
 if (isloggedin()) {
-    death('This section is intended for parents to look up their DragonNet username and to reset their passwords. You have to be logged out to use it.');
+    echo '<div class="alert alert-danger">This section is intended for parents to look up their username and to reset their passwords. You have to be logged out to use it.</div>';
+    die();
 }
 
-if ( empty($powerschoolID) )  {
-    output_forms(null, $placeholder="Start typing your child's name, at least two characters is needed.");
+if (empty($powerschoolid)) {
+
+    output_forms(null, $placeholder = "Start typing your child's name, at least two characters is needed.");
+
 } else {
 
     if ($email == "YES") {
@@ -39,49 +61,43 @@ if ( empty($powerschoolID) )  {
         $row->key = $key;
         $row->time = time();
         $row->used = 0;
-        $DB->insert_record('dnet_pwreset_keys', $row);
+        $DB->insert_record('acct_mgmt_pw_reset_keys', $row);
         $url = $CFG->wwwroot . derive_plugin_path_from("reset_parent_password.php?userID={$user->id}&key={$key}");
 
-        $message_header = get_string('email_msg_parent_body', 'local_dnet_account_management');
-        $message_footer = get_string('email_msg_parent_footer', 'local_dnet_account_management');
-        $message = $message_header. $url . $message_footer;
+        $messageheader = get_string('email_msg_parent_body', 'local_account_management');
+        $messagefooter = get_string('email_msg_parent_footer', 'local_account_management');
+        $message = $messageheader. $url . $messagefooter;
 
-        $from = $DB->get_record('user', array('username'=>'lcssisadmin'));
+        $from = $DB->get_record('user', array('username' => 'lcssisadmin'));
 
         email_to_user($user, $from, "DragonNet Password Reset Link", $message);
 
-        //mail($user->email, "DragonNet Password Reset Link", $message, "From:DragonNet Admin <lcssisadmin@student.ssis-suzhou.net>");
+        ?>
+        <div class="alert alert-success">
+            <h4><i class="fa fa-envelope-o"></i> An email has been sent to <?php echo mask_email($user->email); ?></h4>
+            <p>Please check and click the link to reset your password. The subject is <strong>"DragonNet Password Reset Link"</strong>. Be sure to check your spam inboxes. If you have any further difficulties, please <a href="http://help.ssis-suzhou.net">open a help ticket</a> with your child(ren)'s name.</p>
+        </div>
 
-        echo '<div class="local-alert"><i class="icon-envelope icon-4x pull-left"></i> ';
-        echo '<p style="font-weight:bold;font-size:18px;">An email has been sent to "'.mask_email($user->email).'". </p>';
-        echo '<p>Please check and click the link to reset your password. The subject is "DragonNet Password Reset Link"; be sure to check your spam inboxes. If you have any further difficulties, please email help@ssis-suzhou.net with your child(ren)\'s name.</p></div>';
-        echo '<ul class="buttons">';
-        echo '<a href="'.$CFG->wwwroot.'" class="btn"><i class="icon-home "></i> DragonNet Home</a>';
-        echo '</ul>';
+        <div class="text-center">
+            <a href="/" class="btn"><i class="fa fa-home"></i> DragonNet Home</a>
+        </div>
+        <?php
 
     } else if ($email == "NO") {
 
-        sign("phone", "Please contact a school secretary", "We need to change your username, and only secretaries can do that manually. Please <a href=\"http://www.ssis-suzhou.net/contact-us/index.aspx\">go to the school website</a> for contact information. You will simply need to tell them the name of your children who attend SSIS.");
-
-//         echo '<div class="local-alert"><i class="icon-question-sign icon-4x pull-left"></i> ';
-//         echo '<p>Please copy and paste the below text and send to <strong>help@ssis-suzhou.net</strong></p>';
-//         echo '<br />';
-//         echo '<textarea onclick="this.select()" style="width:70%;height:200px;padding:10px;">Dear Help,
-
-// I am parent with PowerSchool family id of '.$family_id.'P and I would like to reset the password to my DragonNet account. Right now, the username in DragonNet is incorrect and needs to be changed.
-
-// Please help me to reset it.
-
-// Regards,</textarea>';
-//         echo '</div>';
+        ?>
+        <div class="alert alert-danger">
+            <h4><i class="fa fa-phone"></i> Please contact a school secretary</h4>
+            <p>We need to change your username, and only secretaries can do that manually. Please <a href="http://www.ssis-suzhou.net/contact-us/index.aspx">go to the school website</a> for contact information. You will simply need to tell them the name of your children who attend SSIS.</p>
+        </div>
+        <?php
 
 
     } else {
-        $user = $DB->get_record('user', array('idnumber'=>$family_id.'P'));
+        $user = $DB->get_record('user', array('idnumber' => $familyid.'P'));
         if (!$user) {
             death("Something wrong with your account. Please contact help@ssis-suzhou.net with the name of your child(ren).");
         }
-        //output_forms($user);
 
         $table = new html_table();
         $table->attributes['class'] = 'userinfobox';
@@ -90,7 +106,7 @@ if ( empty($powerschoolID) )  {
 
         $row->cells[0] = new html_table_cell();
         $row->cells[0]->attributes['class'] = 'left side';
-        $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid'=>1));
+        $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid' => 1));
 
         $row->cells[1] = new html_table_cell();
         $row->cells[1]->attributes['class'] = 'content';
@@ -108,13 +124,18 @@ if ( empty($powerschoolID) )  {
 
         $table->data = array($row);
         echo html_writer::table($table);
-        echo '<ul class="buttons">';
-        echo '<form id="reset_password" action="" method="get">';
-        echo '<a href="'.derive_plugin_path_from('roles/parents.php?email=YES&powerschool='.$user->idnumber).'" class="btn" id="reset_button"><i class="icon-thumbs-up"></i> Yes, that is my email address</a>';
-        echo '<a href="'.derive_plugin_path_from('roles/parents.php?email=NO&powerschool='.$user->idnumber).'" class="btn" id="reset_button"><i class="icon-thumbs-down"></i> No, that is not my email address</a>';
-        echo '<a href="'.derive_plugin_path_from('roles/parents.php').'" class="btn" id="reset_button"><i class="icon-backward "></i> Back</a>';
-        echo '</form>';
-        echo '</ul>';
+
+        echo '<br/>';
+
+        echo '<div class="text-center">';
+
+        echo '<a href="'.derive_plugin_path_from('roles/parents.php').'" class="btn" id="reset_button"><i class="fa fa-backward "></i> Back</a> ';
+
+        echo '<a href="'.derive_plugin_path_from('roles/parents.php?email=YES&powerschool='.$user->idnumber).'" class="btn btn-success" id="reset_button"><i class="fa fa-thumbs-up"></i> Yes, that is my email address</a> ';
+
+        echo '<a href="'.derive_plugin_path_from('roles/parents.php?email=NO&powerschool='.$user->idnumber).'" class="btn btn-danger" id="reset_button"><i class="fa fa-thumbs-down"></i> No, that is not my email address</a>';
+
+        echo '</div>';
     }
 }
 

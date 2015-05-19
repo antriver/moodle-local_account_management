@@ -20,14 +20,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+$string['pluginname'] = 'Account Management';
+$string['email_msg_parent_body'] = 'Dear SSIS Parent,
 
-require_login();
+Someone, probably you, navigated to DragonNet and asked to have your password reset. If not, please just ignore this email.
 
-$userid = required_param('userid', PARAM_RAW);
-$text = required_param('text', PARAM_RAW);
-$subject = required_param('subject', PARAM_RAW);
+To reset your password, click on the following link:
+';
+$string['email_msg_parent_footer'] = '
 
-$from = $DB->get_record('user', array('username' => 'lcssisadmin'));
-$to = $DB->get_record('user', array('id' => $userid));
-email_to_user($to, $from, $subject, $text);
+You will then be able to reset your password. The link above will expire after 24 hours.
+
+Note that DragonNet passwords require a symbol character, such as ! or @ or #.
+
+If you have further difficulties, please contact help@ssis-suzhou.net with the name of your child(ren)';
