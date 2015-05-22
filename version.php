@@ -21,8 +21,6 @@
  */
 
 $plugin->pluginname = "Account Management";
-$plugin->version = 2015051900;
-$plugin->release = '.8 (Build: 2014022305)';
+$plugin->version = 2015052200;
 $plugin->requires = 2013051404;   // Moodle 2.5 January
 $plugin->component = 'local_account_management';
-$plugin->maturity = 'MATURITY_BETA';  // _STABLE?

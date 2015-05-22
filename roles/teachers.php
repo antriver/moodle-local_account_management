@@ -61,7 +61,7 @@ if (empty($powerschoolid)) {
 
         if ( $result = $authplugin->user_update_password($user, $newpassword) ) {
             echo $OUTPUT->heading('DragonNet password for "'.$user->username.'" changed successfully to "changeme"');
-            echo '<div class="local-alert"><i class="icon-beer icon-4x pull-left"></i><p> Resetting the DragonNet password also affects <b>Student Email</b> and <b>DragonTV</b>.</p><p>';
+            echo '<div class="local-alert"><i class="fa fa-beer fa-4x pull-left"></i><p> Resetting the DragonNet password also affects <b>Student Email</b> and <b>DragonTV</b>.</p><p>';
             echo 'They will need to change their password <b>on DragonNet first</b> in order for their Student Email and DragonTV passwords to be updated with their new password.</p></i></div>';
         } else {
             echo $user->firstname. ' '. $user->lastname. ' could not be changed, probably because they do not have an activated account. Contact the DragonNet administrator.';

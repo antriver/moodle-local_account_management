@@ -81,16 +81,16 @@ if ($confirm == "YES") {
 } else {
     ?>
         <div class="local-alert">
-        <i class="icon-4x pull-left icon-user"></i> <p style="font-size:18px;">Your username is <strong><?php echo $user->username ?></strong>.</p>
+        <i class="fa fa-4x pull-left fa-user"></i> <p style="font-size:18px;">Your username is <strong><?php echo $user->username ?></strong>.</p>
         <p>&nbsp;</p></div>
 
         <div class="local-alert">
-        <i class="icon-4x pull-left icon-key"></i> <p style="font-size:18px;">Your temporary password is <strong>changeme</strong>.</p>
+        <i class="fa fa-4x pull-left fa-key"></i> <p style="font-size:18px;">Your temporary password is <strong>changeme</strong>.</p>
         <p>&nbsp;</p></div>
 
         <div class="local-alert">
-        <i class="icon-4x pull-left icon-question-sign"></i> <p style="font-weight:bold;font-size:18px;">Now login again with the above credentials.</p>
-        <p><a id="confirm" href="#" class="btn" id="reset_button"><i class="icon-hand-right"></i> Login again</a></p></div>
+        <i class="fa fa-4x pull-left fa-question-circle"></i> <p style="font-weight:bold;font-size:18px;">Now login again with the above credentials.</p>
+        <p><a id="confirm" href="#" class="btn" id="reset_button"><i class="fa fa-hand-o-right"></i> Login again</a></p></div>
 
         <div id="dialog" title="Reminder" style="display:none"> Remember, your current password is <b>changeme</b>. You will have to enter it twice.</div>
 

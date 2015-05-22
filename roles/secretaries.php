@@ -72,8 +72,8 @@ if (empty($powerschoolid)) {
         } else {
             echo $user->firstname. ' '. $user->lastname. ' could not be changed, probably because they do not have an activated account. Contact the DragonNet administrator.';
         }
-        echo '<ul class="buttons"><li><a class="btn" href="'.derive_plugin_path_from('').'"><i class="icon-backward"></i> Return</a></li></ul>';
-        echo '<ul class="buttons"><li><a id="email_user" class="btn" href="'.derive_plugin_path_from('roles/secretaries.php').'?powerschoolid='.$powerschoolid.'&email=YES"><i class="icon-envelope"></i> Email</a></li></ul>';
+        echo '<ul class="buttons"><li><a class="btn" href="'.derive_plugin_path_from('').'"><i class="fa fa-backward"></i> Return</a></li></ul>';
+        echo '<ul class="buttons"><li><a id="email_user" class="btn" href="'.derive_plugin_path_from('roles/secretaries.php').'?powerschoolid='.$powerschoolid.'&email=YES"><i class="fa fa-envelope"></i> Email</a></li></ul>';
 
         // Dialogs and scripts used in the box output
         $defaultbody = "Dear ".$user->firstname.' '. $user->lastname.",\n\nAs requested, your DragonNet account has been reset.\n\nYour username is:\n".$user->username."\n\nYour password is:\nchangeme\n\nThank you.\n\nRegards,\nSSIS DragonNet";
@@ -195,7 +195,7 @@ if (empty($powerschoolid)) {
         echo '<input name="powerschool" type="hidden" value="'.$user->idnumber.'"/>';
         echo '<input name="reset_password" type="hidden" id="reset_password" value="YES"/>';
         if (strpos($user->email, '@student.ssis-suzhou.net') !== false) {
-            echo '<a href="'.derive_plugin_path_from('roles/secretaries.php?powerschool=').$familyid.'P'.'" class="btn" id="parent_instead"><i class="icon-male"></i> Get Parent Account Instead</a>';
+            echo '<a href="'.derive_plugin_path_from('roles/secretaries.php?powerschool=').$familyid.'P'.'" class="btn" id="parent_instead"><i class="fa fa-male"></i> Get Parent Account Instead</a>';
         }
         echo '<a id="reset_button" href="#" class="btn btn-success"><i class="fa fa-key"></i> Reset '.$user->firstname.' '.$user->lastname.'\'s password</a>';
         echo '</form>';
